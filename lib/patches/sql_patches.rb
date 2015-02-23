@@ -23,6 +23,8 @@ class SqlPatches
   def self.record_sql(statement, &block)
     start  = Time.now
     result = yield
+    return result if ::Rack::MiniProfiler.config.skip_schema_queries && statement =~ /SCHEMA|SHOW CREATE|SHOW TABLES|SHOW FULL FIELDS/
+
     record = ::Rack::MiniProfiler.record_sql( statement, elapsed_time(start) )
     return result, record
   end
